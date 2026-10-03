@@ -54,10 +54,17 @@ def generate_reports(count: int = 50):
                 title = f"[STRAŻ MIEJSKA] Zabezpieczono: {specie}"
 
             wkt_point = f"SRID=4326;POINT({lon} {lat})"
-            
+
+            coat_color = random.choice(["biały", "czarny", "szary", "brązowy", "rudo-bury", "pręgowane"]) if random.random() < 0.8 else None
+            breed = random.choice(["kot domowy", "mieszaniec", "pies mieszany", "labrador", "owczarek niemiecki", "chihuahua"]) if random.random() < 0.7 else None
+            sex = random.choice(["samiec", "samica"]) if random.random() < 0.6 else None
+
             report = Report(
                 title=title,
                 description=fake.sentence(nb_words=12),
+                coat_color=coat_color,
+                breed=breed,
+                sex=sex,
                 species=specie,
                 status=stat,
                 photo_url=photo,

@@ -11,7 +11,17 @@ def init_db():
     with engine.connect() as conn:
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
         conn.commit()
+
     Base.metadata.create_all(bind=engine)
+
+    with engine.connect() as conn:
+        conn.execute(text("""
+            ALTER TABLE reports
+                ADD COLUMN IF NOT EXISTS coat_color VARCHAR(80),
+                ADD COLUMN IF NOT EXISTS breed VARCHAR(80),
+                ADD COLUMN IF NOT EXISTS sex VARCHAR(30);
+        """))
+        conn.commit()
 
 def get_db():
     db = SessionLocal()
