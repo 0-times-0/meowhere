@@ -1,16 +1,20 @@
-//import { useState } from 'react'
-import creature from './assets/creature.webp'
+// src/App.tsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Home } from './pages/Home'
+import { ReportDetail } from './components/ReportDetail'
 import './App.css'
-import {Tile} from './components/Tile'
-function App() {
-  //const [count, setCount] = useState(0)
 
+function App() {
   return (
-    <>
-      <h1>Meow</h1>
-      <Tile title="Mruczysław" image="https://static.wikia.nocookie.net/silly-cat/images/d/d8/Jinx.png" description="zaginął, bardzo silly"/>
-      <img src={creature} alt="Kreatura" />
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* Main page list */}
+        <Route path="/" element={<Home />} />
+
+        {/* Detailed page for a single pet report */}
+        <Route path="/reports/:id" element={<ReportDetail />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
