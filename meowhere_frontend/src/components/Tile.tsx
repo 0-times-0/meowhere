@@ -10,12 +10,18 @@ interface TileProps {
 
 export function Tile({ id, title, image, description, contact }: TileProps) {
   return (
-    <Link to={`/reports/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link to={`/reports/${id}`} className="tile-link">
       <div className="tile">
-        <img src={image} alt={title} />
-        <h3>{title}</h3>
-        <p>{description}</p>
-        {contact && <p><strong>Kontakt:</strong> {contact}</p>}
+        <img src={image} alt={title} className="tile-image" />
+        <div className="tile-content">
+          <h3 className="tile-title">{title}</h3>
+          <p className="tile-description">{description}</p>
+          {contact && (
+            <p className="tile-contact">
+              <strong>Kontakt:</strong> {contact}
+            </p>
+          )}
+        </div>
       </div>
     </Link>
   )

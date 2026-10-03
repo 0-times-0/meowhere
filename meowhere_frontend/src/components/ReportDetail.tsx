@@ -1,4 +1,3 @@
-// src/components/ReportDetail.tsx
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import type { Report } from '../types'
@@ -19,17 +18,48 @@ export function ReportDetail() {
   }
 
   return (
-    <div className="report-detail">
-      <Link to="/">← Powrót do listy</Link>
+    <div>
+      <Link to="/" className="back-link">← Powrót do listy</Link>
 
-      <h1>{report.title}</h1>
-      <img src={report.photo_url} alt={report.title} style={{ maxWidth: '400px' }} />
+      <div className="report-detail">
+        <h1>{report.title}</h1>
 
-      <p><strong>Gatunek:</strong> {report.species}</p>
-      <p><strong>Status:</strong> {report.status}</p>
-      <p><strong>Opis:</strong> {report.description}</p>
-      <p><strong>Kontakt:</strong> {report.contact_phone}</p>
-      <p><strong>Lokalizacja:</strong> {report.latitude}, {report.longitude}</p>
+        <div className="report-detail-layout">
+          {/* Column 1: Image */}
+          <div>
+            <img src={report.photo_url} alt={report.title} className="report-detail-image" />
+          </div>
+
+          {/* Column 2: Info & Future Map */}
+          <div className="report-info-group">
+            <div className="report-info-row">
+              <span className="report-info-label">Gatunek:</span>
+              <span>{report.species}</span>
+            </div>
+            <div className="report-info-row">
+              <span className="report-info-label">Status:</span>
+              <span>{report.status}</span>
+            </div>
+            <div className="report-info-row">
+              <span className="report-info-label">Opis:</span>
+              <span>{report.description}</span>
+            </div>
+            <div className="report-info-row">
+              <span className="report-info-label">Kontakt:</span>
+              <span>{report.contact_phone}</span>
+            </div>
+            <div className="report-info-row">
+              <span className="report-info-label">Lokalizacja:</span>
+              <span>{report.latitude}, {report.longitude}</span>
+            </div>
+
+            {/* PLACEHOLDER FOR MAP COMPONENT FUTURE INTEGRATION */}
+
+{/* <Map lat={report.latitude} lng={report.longitude} /> */}
+{/* <div className="map-container"> </div> */}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

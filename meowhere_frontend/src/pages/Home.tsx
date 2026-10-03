@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import { useState, useEffect } from 'react'
 import creature from '../assets/creature.webp'
 import { Tile } from '../components/Tile'
@@ -16,7 +15,7 @@ export function Home() {
 
   return (
     <>
-      <h1>Meow</h1>
+      <h1 className="page-header">Meow</h1>
 
       <div className="reports-list">
         {reports.map((report) => (
@@ -31,7 +30,7 @@ export function Home() {
         ))}
       </div>
 
-      <img src={creature} alt="Kreatura" />
+      <img src={creature} alt="Kreatura" className="creature-footer" />
     </>
   )
 }

@@ -1,39 +1,46 @@
-css
-/* 1. Global Setup: Set a clean sans-serif system font stack */
 :root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  line-height: 1.6;
+  /* Dark Mode Color Palette */
+  --bg-main: #0f172a;       /* Deep slate background */
+  --bg-card: #1e293b;       /* Card background */
+  --bg-card-hover: #334155; /* Subtle hover highlight */
+  --border-color: #334155;  /* Subtle card borders */
+  
+  --text-primary: #f8fafc;  /* Clean high-contrast white */
+  --text-muted: #94a3b8;    /* Muted gray for subtext/labels */
+  --accent: #38bdf8;        /* Vivid blue for links & highlights */
+  --accent-hover: #7dd3fc;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* 2. Default Light Mode Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  background-color: #ffffff;
-  color: #222222;
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 0 20px;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+#root {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
 a {
-  color: #0066cc;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-h1, h2, h3 {
-  color: #111111;
-}
-
-/* 3. Automatic Dark Mode Styles */
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #121212; /* Softer than pure black to reduce eye strain */
-    color: #e0e0e0;            /* Soft off-white for comfortable reading */
-  }
-
-  h1, h2, h3 {
-    color: #ffffff;
-  }
-
-  a {
-    color: #66b2ff;            /* Brighter blue for better contrast on dark backgrounds */
-  }
+a:hover {
+  color: var(--accent-hover);
 }

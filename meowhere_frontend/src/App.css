@@ -1,39 +1,135 @@
-css
-/* 1. Global Setup: Set a clean sans-serif system font stack */
-:root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  line-height: 1.6;
+/* --- Header & Creature --- */
+.page-header {
+  font-size: 2.25rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.025em;
 }
 
-/* 2. Default Light Mode Styles */
-body {
-  background-color: #ffffff;
-  color: #222222;
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 0 20px;
+.creature-footer {
+  display: block;
+  max-width: 180px;
+  margin: 3rem auto 0;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
 }
 
-a {
-  color: #0066cc;
+.creature-footer:hover {
+  opacity: 1;
 }
 
-h1, h2, h3 {
-  color: #111111;
+/* --- Reports Grid (Home View) --- */
+.reports-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
 }
 
-/* 3. Automatic Dark Mode Styles */
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #121212; /* Softer than pure black to reduce eye strain */
-    color: #e0e0e0;            /* Soft off-white for comfortable reading */
+/* --- Tile Card Component --- */
+.tile-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tile {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tile-link:hover .tile {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4);
+}
+
+.tile-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background-color: #020617;
+}
+
+.tile-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.5rem;
+}
+
+.tile-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tile-description {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  flex-grow: 1;
+}
+
+.tile-contact {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  color: var(--text-primary);
+}
+
+/* --- Report Detail View --- */
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.report-detail {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+}
+
+.report-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+/* When screen size allows, split into two columns (Photo + Info / Map) */
+@media (min-width: 768px) {
+  .report-detail-layout {
+    grid-template-columns: 1fr 1fr;
   }
+}
 
-  h1, h2, h3 {
-    color: #ffffff;
-  }
+.report-detail-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
 
-  a {
-    color: #66b2ff;            /* Brighter blue for better contrast on dark backgrounds */
-  }
+.report-info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.report-info-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.report-info-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  min-width: 90px;
 }
