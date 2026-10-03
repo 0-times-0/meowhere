@@ -14,6 +14,8 @@ Healthcheck: http://localhost:8000/health
 
 ### 4. Endpointy API
 
+POST /reports/
+
 Przykładowy payload JSON:
 ```bash
 {
@@ -28,8 +30,10 @@ Przykładowy payload JSON:
 }
 ```
 
-POST /reports/
+
 GET /reports/
+
+GET /reports/{report_id} – dostarcza pełne dane pojedynczego zgłoszenia po kliknięciu w pinezkę lub bezpośrednim wejściu w adres /listing?id={id}
 
 Przykładowy format odpowiedzi 
 ```bash
@@ -48,4 +52,6 @@ Przykładowy format odpowiedzi
   }
 ]
 ```
+
+
 
