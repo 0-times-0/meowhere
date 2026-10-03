@@ -45,5 +45,5 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Optional: local Docker volumes / generated files
+# Optional: local Docker volumes / generated file
 *.local
