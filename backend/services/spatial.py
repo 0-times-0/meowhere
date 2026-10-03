@@ -12,6 +12,9 @@ def create_report(db: Session, report_data: ReportCreate) -> Report:
     db_report = Report(
         title=report_data.title,
         description=report_data.description,
+        coat_color=report_data.coat_color,
+        breed=report_data.breed,
+        sex=report_data.sex,
         species=report_data.species,
         status=report_data.status,
         photo_url=report_data.photo_url,
