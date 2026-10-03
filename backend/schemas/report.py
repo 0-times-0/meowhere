@@ -4,8 +4,11 @@ from pydantic import BaseModel, Field, model_validator
 from shapely import wkb
 
 class ReportBase(BaseModel):
-    title: str = Field(..., max_length=120, example="Zaginął rudy kot")
-    description: Optional[str] = Field(None, example="Białe łapki, reaguje na imię Mruczek")
+    title: str = Field(..., max_length=120, example="Zaginął kot")
+    description: Optional[str] = Field(None, example="Białe łapki, reaguje na imię Loszka")
+    coat_color: Optional[str] = Field(None, example="biało-czarny")
+    breed: Optional[str] = Field(None, example="kot domowy")
+    sex: Optional[str] = Field(None, example="samica")
     species: str = Field(..., example="cat")
     status: str = Field(..., example="lost")
     photo_url: Optional[str] = Field(None, example="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba")
@@ -34,6 +37,9 @@ class ReportResponse(ReportBase):
                 "id": data.id,
                 "title": data.title,
                 "description": data.description,
+                "coat_color": data.coat_color,
+                "breed": data.breed,
+                "sex": data.sex,
                 "species": data.species,
                 "status": data.status,
                 "photo_url": data.photo_url,

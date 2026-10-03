@@ -8,3 +8,8 @@ pydantic-settings==2.2.1
 shapely==2.0.3
 faker==24.4.0
 python-dotenv==1.0.1
+python-multipart==0.0.9
+pyjwt==2.8.0
+torch>=2.0.0
+torchvision>=0.15.0
+pillow>=10.0.0
