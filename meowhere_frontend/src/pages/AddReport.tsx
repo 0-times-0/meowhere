@@ -2,6 +2,7 @@
 import { useState, FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import type { CreateReportInput } from '../types'
+import { ClickMap } from '../components/Map'
 
 export function AddReport() {
   const navigate = useNavigate()

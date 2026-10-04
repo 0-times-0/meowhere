@@ -29,7 +29,7 @@ export function Tile({ id, title, image, description, contact, lat, lon, iscat}:
           )}
           <p>Miejsce zgłoszenia:</p>
           <MiniMap
-          cat={iscat}
+          cat={iscat?true:false}
           latitude={lat}
           longtitude={lon}
           />

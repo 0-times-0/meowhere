@@ -18,6 +18,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ iscat, position, children }
     iconUrl: iscat ? CatMarkerUrl : DogMarkerUrl,
     iconSize: [50, 50],
     iconAnchor: [25, 50],
+    popupAnchor: [0, -50],
   });
 
   return (
