@@ -1,0 +1,40 @@
+.report-detail-layout,
+.report-info-group {
+  min-width: 0;
+}
+
+.report-detail-layout > * {
+  min-width: 0;
+}
+
+.report-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* Image: never wider than its column, keeps proportions */
+.report-detail-image {
+  display: block;
+  max-width: 100%;
+  max-height: 500px;
+  width: auto;
+  margin: 0 auto;   /* centers it */
+}
+
+/* Maps: fill the column width, height from aspect ratio */
+.maximap,
+.minimap {
+  width: 100%;
+  max-width: 100%;
+}
+
+.maximap {
+  aspect-ratio: 16 / 9;
+  max-height: 70vh;
+}
+
+.minimap {
+  aspect-ratio: 4 / 3;
+  max-height: 300px;
+}

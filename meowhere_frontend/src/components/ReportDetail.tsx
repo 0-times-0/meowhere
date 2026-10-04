@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import type { Report } from '../types'
+import "leaflet/dist/leaflet.css";
+import "./components.css"
+import { MaxiMap, MiniMap } from './Map';
 
 export function ReportDetail() {
   const { id } = useParams<{ id: string }>()
@@ -26,12 +29,13 @@ export function ReportDetail() {
 
         <div className="report-detail-layout">
           {/* Column 1: Image */}
-          <div>
-            <img src={report.photo_url} alt={report.title} className="report-detail-image" />
-          </div>
+          
 
           {/* Column 2: Info & Future Map */}
           <div className="report-info-group">
+            <div>
+            <span><img src={report.photo_url} alt={report.title} className="report-detail-image" /></span>
+            </div>
             <div className="report-info-row">
               <span className="report-info-label">Gatunek:</span>
               <span>{report.species}</span>
@@ -52,9 +56,13 @@ export function ReportDetail() {
               <span className="report-info-label">Lokalizacja:</span>
               <span>{report.latitude}, {report.longitude}</span>
             </div>
+            <MaxiMap
+              latitude={report.latitude}
+              longtitude={report.longitude}
+            />
 
             {/* PLACEHOLDER FOR MAP COMPONENT FUTURE INTEGRATION */}
-
+            
 {/* <Map lat={report.latitude} lng={report.longitude} /> */}
 {/* <div className="map-container"> </div> */}
           </div>
