@@ -35,6 +35,7 @@ export function Home() {
             contact={report.contact_phone}
             lat={report.latitude}
             lon={report.longitude}
+            iscat={report.species=="cat"?true:false}
           />
         ))}
       </div>

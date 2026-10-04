@@ -57,6 +57,7 @@ export function ReportDetail() {
               <span>{report.latitude}, {report.longitude}</span>
             </div>
             <MaxiMap
+              cat={report.species=="cat"?true:false}
               latitude={report.latitude}
               longtitude={report.longitude}
             />

@@ -11,9 +11,10 @@ interface TileProps {
   contact?: string
   lat: number
   lon: number
+  iscat: boolean
 }
 
-export function Tile({ id, title, image, description, contact, lat, lon }: TileProps) {
+export function Tile({ id, title, image, description, contact, lat, lon, iscat}: TileProps) {
   return (
     <Link to={`/reports/${id}`} className="tile-link">
       <div className="tile">
@@ -28,6 +29,7 @@ export function Tile({ id, title, image, description, contact, lat, lon }: TileP
           )}
           <p>Miejsce zgłoszenia:</p>
           <MiniMap
+          cat={iscat}
           latitude={lat}
           longtitude={lon}
           />
