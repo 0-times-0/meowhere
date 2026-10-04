@@ -19,7 +19,7 @@ export function AddReport() {
     status: 'lost',
     photo_url: '',
     contact_phone: '',
-    latitude: 50.0614,
+    latitude: 50.0614,  // Domyślny środek Krakowa
     longitude: 19.9366,
   })
 
@@ -29,7 +29,7 @@ export function AddReport() {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'latitude' || name === 'longitude' ? parseFloat(value) || 0 : value,
+      [name]: value,
     }))
   }
 
@@ -98,7 +98,7 @@ export function AddReport() {
               <label htmlFor="status">Status</label>
               <select id="status" name="status" value={formData.status} onChange={handleChange}>
                 <option value="lost">Zaginiony</option>
-                <option value="found">Znaleziony</option>
+                <option value="found_patrol">Zabezpieczony (Straż)</option>
               </select>
             </div>
           </div>
@@ -178,30 +178,19 @@ export function AddReport() {
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="latitude">Szerokość geogr. (Lat)</label>
-              <input
-                type="number"
-                step="any"
-                id="latitude"
-                name="latitude"
-                value={formData.latitude}
-                onChange={handleChange}
+          {/* Sekcja Mapy do wyboru lokalizacji */}
+          <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
+            <label>Zaznacz lokalizację na mapie (kliknij w miejsce) *</label>
+            <div style={{ borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+              <ClickMap 
+                onLocationSelect={(lat, lng) => 
+                  setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))
+                } 
               />
             </div>
-
-            <div className="form-group">
-              <label htmlFor="longitude">Długość geogr. (Lng)</label>
-              <input
-                type="number"
-                step="any"
-                id="longitude"
-                name="longitude"
-                value={formData.longitude}
-                onChange={handleChange}
-              />
-            </div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--accent)', marginTop: '0.5rem' }}>
+              Wybrane współrzędne: {formData.latitude.toFixed(6)}, {formData.longitude.toFixed(6)}
+            </p>
           </div>
 
           <button type="submit" disabled={submitting} className="btn-submit">
