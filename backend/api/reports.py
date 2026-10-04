@@ -51,6 +51,31 @@ def get_reports(
     )
 
 
+@router.get("/mine", response_model=List[ReportResponse])
+def get_my_reports(
+    user_id: Optional[int] = Query(None, description="ID użytkownika, którego zgłoszenia mają zostać pobrane"),
+    municipal_user_id: Optional[int] = Query(None, description="ID pracownika straży miejskiej, którego zgłoszenia mają zostać pobrane"),
+    db: Session = Depends(get_db)
+):
+    """
+    Zwraca wszystkie zgłoszenia utworzone przez konkretnego użytkownika lub straż miejską.
+    Umożliwia łatwe pobieranie i sprawdzanie własnych wpisów bez logowania.
+    """
+    if user_id is None and municipal_user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Należy podać user_id albo municipal_user_id."
+        )
+
+    query = db.query(Report)
+    if user_id is not None:
+        query = query.filter(Report.user_id == user_id)
+    if municipal_user_id is not None:
+        query = query.filter(Report.municipal_user_id == municipal_user_id)
+
+    return query.order_by(Report.created_at.desc()).all()
+
+
 @router.get("/{report_id}", response_model=ReportResponse)
 def get_report_by_id(report_id: int, db: Session = Depends(get_db)):
     """
@@ -64,3 +89,43 @@ def get_report_by_id(report_id: int, db: Session = Depends(get_db)):
             detail=f"Zgłoszenie o ID {report_id} nie zostało znalezione."
         )
     return report
+
+
+@router.delete("/{report_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_report(
+    report_id: int,
+    user_id: Optional[int] = Query(None, description="ID właściciela zgłoszenia z tabeli users"),
+    municipal_user_id: Optional[int] = Query(None, description="ID właściciela zgłoszenia z tabeli municipal_users"),
+    db: Session = Depends(get_db)
+):
+    """
+    Usuwa zgłoszenie tylko wtedy, gdy zostało utworzone przez podanego użytkownika lub straż miejską.
+    """
+    if user_id is None and municipal_user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Należy podać user_id albo municipal_user_id."
+        )
+
+    report = db.query(Report).filter(Report.id == report_id).first()
+    if not report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Zgłoszenie o ID {report_id} nie zostało znalezione."
+        )
+
+    if user_id is not None and report.user_id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Nie masz uprawnień do usunięcia tego zgłoszenia."
+        )
+
+    if municipal_user_id is not None and report.municipal_user_id != municipal_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Nie masz uprawnień do usunięcia tego zgłoszenia."
+        )
+
+    db.delete(report)
+    db.commit()
+    return None

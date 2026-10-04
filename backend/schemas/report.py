@@ -9,6 +9,9 @@ class ReportBase(BaseModel):
     coat_color: Optional[str] = Field(None, example="biało-czarny")
     breed: Optional[str] = Field(None, example="kot domowy")
     sex: Optional[str] = Field(None, example="samica")
+    shelter_name: Optional[str] = Field(None, example="Schronisko przy ul. Zielonej 12")
+    user_id: Optional[int] = Field(None, example=1)
+    municipal_user_id: Optional[int] = Field(None, example=2)
     species: str = Field(..., example="cat")
     status: str = Field(..., example="lost")
     photo_url: Optional[str] = Field(None, example="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba")
@@ -40,6 +43,9 @@ class ReportResponse(ReportBase):
                 "coat_color": data.coat_color,
                 "breed": data.breed,
                 "sex": data.sex,
+                "shelter_name": data.shelter_name,
+                "user_id": data.user_id,
+                "municipal_user_id": data.municipal_user_id,
                 "species": data.species,
                 "status": data.status,
                 "photo_url": data.photo_url,
