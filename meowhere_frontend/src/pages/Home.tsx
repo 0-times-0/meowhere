@@ -1,4 +1,6 @@
+// src/pages/Home.tsx
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import creature from '../assets/creature.webp'
 import { Tile } from '../components/Tile'
 import type { Report } from '../types'
@@ -15,7 +17,12 @@ export function Home() {
 
   return (
     <>
-      <h1 className="page-header">Meow</h1>
+      <div className="header-action-bar">
+        <h1 className="page-header">Meow</h1>
+        <Link to="/reports/new" className="btn-primary">
+          + Dodaj zgłoszenie
+        </Link>
+      </div>
 
       <div className="reports-list">
         {reports.map((report) => (
