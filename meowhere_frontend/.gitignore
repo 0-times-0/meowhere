@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# inne jakies pozdr :3
+.git
+*.log
+

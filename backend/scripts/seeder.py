@@ -1,87 +1,171 @@
-import random
-from faker import Faker
-from core.database import SessionLocal, init_db
-from models.report import Report
+"""Wypełnia bazę danymi demonstracyjnymi (konta + przykładowe zgłoszenia).
+
+Uruchomienie:
+    sudo docker compose exec backend python scripts/seeder.py
+
+Skrypt jest idempotentny: można go uruchamiać wielokrotnie.
+Hasła kont demo są przy każdym uruchomieniu ustawiane na wartości
+z konfiguracji, żeby logowanie zawsze działało tak, jak w dokumentacji.
+"""
+
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
 from geoalchemy2.elements import WKTElement
+from sqlalchemy import func, text
+from sqlalchemy.orm import Session
 
-fake = Faker("pl_PL")
+from core.config import settings
+from core.database import Base, SessionLocal, engine
+from core.security import hash_password
+from models import MunicipalUser, Report, User
 
-# Współrzędne Tauron Arena: 50.0680, 19.9880
-CENTER_LAT = 50.0680
-CENTER_LON = 19.9880
 
-SPECIES_LIST = ["cat", "dog", "other"]
-STATUS_LIST = ["lost", "found_patrol", "resolved"]
+RESIDENT_EMAIL = "anna.kowalska@example.com"
+RESIDENT_USERNAME = "anna_kowalska"
+RESIDENT_PASSWORD = "Mieszkaniec123!"
 
-DOG_PHOTOS = [
-    "https://images.unsplash.com/photo-1543466835-00a7907e9de1",
-    "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e",
-    "https://images.unsplash.com/photo-1537151625747-768eb6cf92b2",
-]
-CAT_PHOTOS = [
-    "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-    "https://images.unsplash.com/photo-1573865526739-10659fec78a5",
-    "https://images.unsplash.com/photo-1495360010541-f48722b34f7d",
-]
 
-def generate_reports(count: int = 50):
-    init_db()
+def _ensure_resident(db: Session) -> User:
+    resident = (
+        db.query(User)
+        .filter(func.lower(User.email) == RESIDENT_EMAIL)
+        .first()
+    )
+
+    if resident is None:
+        resident = User(
+            username=RESIDENT_USERNAME,
+            email=RESIDENT_EMAIL,
+            full_name="Anna Kowalska",
+            phone_number="+48 501 234 567",
+            password_hash=hash_password(RESIDENT_PASSWORD),
+            is_active=True,
+            is_verified=True,
+        )
+        db.add(resident)
+        db.flush()
+        print(f"[+] Utworzono konto mieszkańca: {RESIDENT_EMAIL}")
+    else:
+        resident.password_hash = hash_password(RESIDENT_PASSWORD)
+        db.flush()
+        print(f"[=] Konto mieszkańca już istnieje: {RESIDENT_EMAIL}")
+
+    return resident
+
+
+def _ensure_municipal(db: Session) -> MunicipalUser:
+    """
+    Numer odznaki jest przechowywany w kolumnie `username`
+    (model MunicipalUser nie ma osobnego pola badge_number).
+    """
+
+    badge = settings.DEMO_MUNICIPAL_BADGE
+
+    officer = (
+        db.query(MunicipalUser)
+        .filter(func.lower(MunicipalUser.username) == badge.lower())
+        .first()
+    )
+
+    if officer is None:
+        officer = MunicipalUser(
+            username=badge,
+            email=settings.DEMO_MUNICIPAL_EMAIL,
+            full_name=settings.DEMO_MUNICIPAL_NAME,
+            department=settings.DEMO_MUNICIPAL_UNIT,
+            shelter_name="Schronisko na Paluchu",
+            password_hash=hash_password(settings.DEMO_MUNICIPAL_PASSWORD),
+            is_active=True,
+            is_verified=True,
+        )
+        db.add(officer)
+        db.flush()
+        print(f"[+] Utworzono konto Straży Miejskiej: {badge}")
+    else:
+        officer.password_hash = hash_password(settings.DEMO_MUNICIPAL_PASSWORD)
+        db.flush()
+        print(f"[=] Konto Straży Miejskiej już istnieje: {badge}")
+
+    return officer
+
+
+def _seed_reports(db: Session, resident: User, officer: MunicipalUser) -> None:
+    if db.query(Report).count() > 0:
+        print("[=] Zgłoszenia już są w bazie - pomijam przykłady.")
+        return
+
+    db.add_all(
+        [
+            Report(
+                title="Zaginął rudy kot Karmel",
+                description="Rudy pręgowany kocur z białym krawatem, bardzo łagodny.",
+                species="cat",
+                status="lost",
+                coat_color="rudy z białym",
+                breed="Europejski",
+                sex="male",
+                contact_phone="+48 501 234 567",
+                user_id=resident.id,
+                location=WKTElement("SRID=4326;POINT(21.0122 52.2297)", srid=4326),
+            ),
+            Report(
+                title="Odłowiono rudego kota na Śródmieściu",
+                description="Kot znaleziony w okolicy ul. Marszałkowskiej, bez obroży.",
+                species="cat",
+                status="found_patrol",
+                coat_color="rudy pręgowany",
+                breed="Europejski",
+                sex="male",
+                shelter_name="Schronisko na Paluchu",
+                contact_phone="+48 22 986 00 00",
+                municipal_user_id=officer.id,
+                location=WKTElement("SRID=4326;POINT(21.0155 52.2315)", srid=4326),
+            ),
+            Report(
+                title="Zaginęła suczka Luna (beagle)",
+                description="Pobiegła za wiewiórką w Parku Skaryszewskim. Ma czerwoną obrożę.",
+                species="dog",
+                status="lost",
+                coat_color="trikolor (brązowo-biało-czarny)",
+                breed="Beagle",
+                sex="female",
+                contact_phone="+48 501 234 567",
+                user_id=resident.id,
+                location=WKTElement("SRID=4326;POINT(21.0558 52.2412)", srid=4326),
+            ),
+        ]
+    )
+    print("[+] Dodano 3 przykładowe zgłoszenia.")
+
+
+def seed() -> None:
+    with engine.begin() as conn:
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis"))
+    Base.metadata.create_all(bind=engine)
+
     db = SessionLocal()
-
     try:
-        reports = []
-        for _ in range(count):
-            specie = random.choice(SPECIES_LIST)
-            stat = random.choices(STATUS_LIST, weights=[60, 30, 10])[0]
-
-            # Rozrzut w promieniu około 3-5 km od centrum
-            lat_offset = random.uniform(-0.035, 0.035)
-            lon_offset = random.uniform(-0.045, 0.045)
-            lat = CENTER_LAT + lat_offset
-            lon = CENTER_LON + lon_offset
-
-            if specie == "dog":
-                title = f"Zaginął pies: {fake.first_name()}"
-                photo = random.choice(DOG_PHOTOS)
-            elif specie == "cat":
-                title = f"Szukamy kota: {fake.first_name()}"
-                photo = random.choice(CAT_PHOTOS)
-            else:
-                title = "Widziano błąkające się zwierzę"
-                photo = "https://images.unsplash.com/photo-1425082661705-1834bfd09dca"
-
-            if stat == "found_patrol":
-                title = f"[STRAŻ MIEJSKA] Zabezpieczono: {specie}"
-
-            wkt_point = f"SRID=4326;POINT({lon} {lat})"
-
-            coat_color = random.choice(["biały", "czarny", "szary", "brązowy", "rudo-bury", "pręgowane"]) if random.random() < 0.8 else None
-            breed = random.choice(["kot domowy", "mieszaniec", "pies mieszany", "labrador", "owczarek niemiecki", "chihuahua"]) if random.random() < 0.7 else None
-            sex = random.choice(["samiec", "samica"]) if random.random() < 0.6 else None
-
-            report = Report(
-                title=title,
-                description=fake.sentence(nb_words=12),
-                coat_color=coat_color,
-                breed=breed,
-                sex=sex,
-                species=specie,
-                status=stat,
-                photo_url=photo,
-                contact_phone=fake.phone_number() if stat == "lost" else "986",
-                location=WKTElement(wkt_point, srid=4326),
-                created_at=fake.date_time_this_month()
-            )
-            reports.append(report)
-
-        db.add_all(reports)
+        resident = _ensure_resident(db)
+        officer = _ensure_municipal(db)
+        _seed_reports(db, resident, officer)
         db.commit()
-        print(f"Pomyślnie dodano {count} zgłoszeń demonstracyjnych do bazy.")
-    except Exception as e:
+    except Exception:
         db.rollback()
-        print(f"Błąd podczas seedowania bazy: {e}")
+        raise
     finally:
         db.close()
 
+    print()
+    print("Seeder zakończony sukcesem.")
+    print(f"Mieszkaniec:    {RESIDENT_EMAIL} / {RESIDENT_PASSWORD}")
+    print(
+        f"Straż Miejska: {settings.DEMO_MUNICIPAL_BADGE} / "
+        f"{settings.DEMO_MUNICIPAL_PASSWORD}"
+    )
+
+
 if __name__ == "__main__":
-    generate_reports(50)
+    seed()

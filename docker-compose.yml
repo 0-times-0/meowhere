@@ -4,9 +4,14 @@ services:
     container_name: meowhere_postgis
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-meow_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-meow_password}
-      POSTGRES_DB: ${POSTGRES_DB:-meowhere_db}
+      DATABASE_URL: "postgresql+psycopg2://${POSTGRES_USER:-meow_user}:${POSTGRES_PASSWORD:-meow_password}@db:5432/${POSTGRES_DB:-meowhere_db}"
+      APP_ENV: ${APP_ENV:-development}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-development-only-change-this-secret}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-120}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      UPLOAD_DIR: ${UPLOAD_DIR:-uploads}
+      MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-8}
     ports:
       - "5432:5432"
     volumes:
@@ -32,6 +37,26 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  frontend:
+    build:
+      context: ./meowhere_frontend
+      dockerfile: Dockerfile.dev
+    image: meowhere-frontend
+    container_name: meowhere_web
+    ports:
+      - "5173:5173"
+    environment:
+      # Proxy Vite celuje w backend po nazwie usługi w sieci compose.
+      - VITE_API_TARGET=http://backend:8000
+    volumes:
+      # Kod z hosta -> HMR działa bez przebudowywania obrazu.
+      - ./meowhere_frontend:/app
+      # node_modules zostaje z obrazu; ten anonimowy wolumen nie pozwala,
+      # żeby katalog node_modules z hosta go przesłonił.
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
 
 volumes:
   postgres_data:
