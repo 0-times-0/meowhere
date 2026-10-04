@@ -33,6 +33,8 @@ export function Home() {
             image={report.photo_url}
             description={report.description}
             contact={report.contact_phone}
+            lat={report.latitude}
+            lon={report.longitude}
           />
         ))}
       </div>

@@ -26,6 +26,7 @@ export function Tile({ id, title, image, description, contact, lat, lon }: TileP
               <strong>Kontakt:</strong> {contact}
             </p>
           )}
+          <p>Miejsce zgłoszenia:</p>
           <MiniMap
           latitude={lat}
           longtitude={lon}
