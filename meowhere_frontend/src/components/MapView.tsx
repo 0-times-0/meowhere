@@ -10,7 +10,7 @@ import {
 } from 'react-leaflet';
 import L from 'leaflet';
 import { Link } from 'react-router-dom';
-import { Report } from '../types';
+import type { Report } from '../types';
 import { resolvePhotoUrl } from '../api';
 
 const createPinIcon = (color: string, badge: string) =>

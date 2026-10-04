@@ -9,7 +9,7 @@ import {
   resolveReportById,
 } from '../api';
 import MapView from '../components/MapView';
-import { Report, ReportMatch } from '../types';
+import type { Report, ReportMatch } from '../types';
 
 export const ReportDetailsPage: React.FC = () => {
   const { id: paramId } = useParams<{ id: string }>();

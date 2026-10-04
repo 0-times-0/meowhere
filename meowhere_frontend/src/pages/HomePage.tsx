@@ -7,7 +7,7 @@ import {
   resolvePhotoUrl,
 } from '../api';
 import MapView from '../components/MapView';
-import { Report, ReportStatus, Species } from '../types';
+import type { Report, ReportStatus, Species } from '../types';
 
 export const HomePage: React.FC = () => {
   const [reports, setReports] = useState<Report[]>([]);

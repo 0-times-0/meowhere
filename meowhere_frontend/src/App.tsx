@@ -12,7 +12,7 @@ import {
 import CreateReportPage from './pages/CreateReportPage';
 import HomePage from './pages/HomePage';
 import ReportDetailsPage from './pages/ReportDetailsPage';
-import { AuthSession } from './types';
+import type { AuthSession } from './types';
 
 export const App: React.FC = () => {
   const [session, setSession] = useState<AuthSession | null>(() => getStoredSession());

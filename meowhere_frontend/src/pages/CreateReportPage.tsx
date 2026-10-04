@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createReport, getStoredSession, uploadPhoto } from '../api';
 import MapView from '../components/MapView';
-import { AnimalSex, Species } from '../types';
+import type { AnimalSex, Species } from '../types';
 
 export const CreateReportPage: React.FC = () => {
   const navigate = useNavigate();

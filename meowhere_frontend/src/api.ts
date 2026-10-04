@@ -1,12 +1,10 @@
-import {
+import type {
   AuthSession,
   Report,
   ReportCreatePayload,
   ReportMatch,
-  ReportStatus,
-  Species,
 } from './types';
-
+import type {Species, ReportStatus} from './types';
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 const STORAGE_KEY = 'meowhere_auth_session';
 
